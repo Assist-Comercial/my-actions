@@ -1,0 +1,32 @@
+name: 'Build IBM ACE12'
+description: 'Builds an IBM ACE12 project'
+inputs:
+  AppName:
+    description: 'App Name'
+    required: true
+  ServiceName:
+    description: 'Service Name'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - run: java -cp ${{ env.INTEGRATIONAPI }} com.ibm.broker.config.appdev.FlowRendererBAR -w ${{ github.workspace }}/src -a ${{ inputs.AppName }}-${{ github.run_id }}.bar -k ${{ inputs.AppName }}
+      shell: bash
+      env:
+        INTEGRATIONAPI: ${{ secrets.INTEGRATIONAPI }}
+    - run: ${{ env.INTEGRATIONACE }} mqsiapplybaroverride -b ${{ inputs.AppName }}-${{ github.run_id }}.bar -p ${{ github.workspace }}/configuration/properties/${{ inputs.ServiceName }}_DEV.properties -r
+      shell: bash
+      env:
+        INTEGRATIONACE: ${{ secrets.INTEGRATIONACE }}
+    - run: |
+        mkdir -p ${{ github.workspace }}/initial-config/bars
+        cp ${{ inputs.AppName }}-${{ github.run_id }}.bar ${{ github.workspace }}/initial-config/bars
+      shell: bash
+    - run: |
+        mkdir -p ${{ github.workspace }}/initial-config/
+        cp configuration/properties/*.properties ${{ github.workspace }}/initial-config/
+      shell: bash
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ${{ inputs.ServiceName }}
+        path: ${{ github.workspace }}/initial-config/
