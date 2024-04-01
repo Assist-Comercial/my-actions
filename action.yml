@@ -7,12 +7,18 @@ inputs:
   ServiceName:
     description: 'Service Name'
     required: true
+  INTEGRATIONAPI:
+    description: 'Integration API'
+    required: true
+  INTEGRATIONACE:
+    description: 'Integration ACE'
+    required: true
 runs:
   using: 'composite'
   steps:
-    - run: java -cp ${{ secrets.INTEGRATIONAPI }} com.ibm.broker.config.appdev.FlowRendererBAR -w ${{ github.workspace }}/src -a ${{ inputs.AppName }}-${{ github.run_id }}.bar -k ${{ inputs.AppName }}
+    - run: java -cp ${{ inputs.INTEGRATIONAPI }} com.ibm.broker.config.appdev.FlowRendererBAR -w ${{ github.workspace }}/src -a ${{ inputs.AppName }}-${{ github.run_id }}.bar -k ${{ inputs.AppName }}
       shell: bash
-    - run: ${{ secrets.INTEGRATIONACE }} mqsiapplybaroverride -b ${{ inputs.AppName }}-${{ github.run_id }}.bar -p ${{ github.workspace }}/configuration/properties/${{ inputs.ServiceName }}_DEV.properties -r
+    - run: ${{ inputs.INTEGRATIONACE }} mqsiapplybaroverride -b ${{ inputs.AppName }}-${{ github.run_id }}.bar -p ${{ github.workspace }}/configuration/properties/${{ inputs.ServiceName }}_DEV.properties -r
       shell: bash
     - run: |
         mkdir -p ${{ github.workspace }}/initial-config/bars
