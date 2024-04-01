@@ -16,9 +16,9 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - run: java -cp ${{ vars.INTEGRATIONAPI }} com.ibm.broker.config.appdev.FlowRendererBAR -w ${{ github.workspace }}/src -a ${{ inputs.AppName }}-${{ github.run_id }}.bar -k ${{ inputs.AppName }}
+    - run: java -cp ${{ env.INTEGRATIONAPI }} com.ibm.broker.config.appdev.FlowRendererBAR -w ${{ github.workspace }}/src -a ${{ inputs.AppName }}-${{ github.run_id }}.bar -k ${{ inputs.AppName }}
       shell: bash
-    - run: ${{ vars.INTEGRATIONACE }} mqsiapplybaroverride -b ${{ inputs.AppName }}-${{ github.run_id }}.bar -p ${{ github.workspace }}/configuration/properties/${{ inputs.ServiceName }}_DEV.properties -r
+    - run: ${{ env.INTEGRATIONACE }} mqsiapplybaroverride -b ${{ inputs.AppName }}-${{ github.run_id }}.bar -p ${{ github.workspace }}/configuration/properties/${{ inputs.ServiceName }}_DEV.properties -r
       shell: bash
     - run: |
         mkdir -p ${{ github.workspace }}/initial-config/bars
