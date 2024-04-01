@@ -16,11 +16,9 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - run: java -cp /home/oem/Documentos/ACE/12.0-ACE-LINUXX64-12.0.7.0/ace-12.0.7.0/common/classes/IntegrationAPI.jar
- com.ibm.broker.config.appdev.FlowRendererBAR -w ${{ github.workspace }}/src -a ${{ inputs.AppName }}-${{ github.run_id }}.bar -k ${{ inputs.AppName }}
+    - run: java -cp /home/oem/Documentos/ACE/12.0-ACE-LINUXX64-12.0.7.0/ace-12.0.7.0/common/classes/IntegrationAPI.jar com.ibm.broker.config.appdev.FlowRendererBAR -w ${{ github.workspace }}/src -a ${{ inputs.AppName }}-${{ github.run_id }}.bar -k ${{ inputs.AppName }}
       shell: bash
-    - run: /home/oem/Documentos/ACE/12.0-ACE-LINUXX64-12.0.7.0/ace-12.0.7.0/ace
- mqsiapplybaroverride -b ${{ inputs.AppName }}-${{ github.run_id }}.bar -p ${{ github.workspace }}/configuration/properties/${{ inputs.ServiceName }}_DEV.properties -r
+    - run: /home/oem/Documentos/ACE/12.0-ACE-LINUXX64-12.0.7.0/ace-12.0.7.0/ace mqsiapplybaroverride -b ${{ inputs.AppName }}-${{ github.run_id }}.bar -p ${{ github.workspace }}/configuration/properties/${{ inputs.ServiceName }}_DEV.properties -r
       shell: bash
     - run: |
         mkdir -p ${{ github.workspace }}/initial-config/bars
