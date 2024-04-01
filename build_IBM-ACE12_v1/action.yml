@@ -1,14 +1,8 @@
 name: 'Build IBM ACE12'
 description: 'Builds an IBM ACE12 project'
 inputs:
-  IntegrationAPI:
-    description: 'Integration API'
-    required: true
   AppName:
     description: 'App Name'
-    required: true
-  IntegrationACE:
-    description: 'Integration ACE'
     required: true
   ServiceName:
     description: 'Service Name'
@@ -16,10 +10,14 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - run: java -cp ${{ inputs.IntegrationAPI }} com.ibm.broker.config.appdev.FlowRendererBAR -w ${{ github.workspace }}/src -a ${{ inputs.AppName }}-${{ github.run_id }}.bar -k ${{ inputs.AppName }}
+    - run: java -cp ${{ env.INTEGRATIONAPI }} com.ibm.broker.config.appdev.FlowRendererBAR -w ${{ github.workspace }}/src -a ${{ inputs.AppName }}-${{ github.run_id }}.bar -k ${{ inputs.AppName }}
       shell: bash
-    - run: ${{ inputs.IntegrationACE }} mqsiapplybaroverride -b ${{ inputs.AppName }}-${{ github.run_id }}.bar -p ${{ github.workspace }}/configuration/properties/${{ inputs.ServiceName }}_DEV.properties -r
+      env:
+        INTEGRATIONAPI: ${{ secrets.INTEGRATIONAPI }}
+    - run: ${{ env.INTEGRATIONACE }} mqsiapplybaroverride -b ${{ inputs.AppName }}-${{ github.run_id }}.bar -p ${{ github.workspace }}/configuration/properties/${{ inputs.ServiceName }}_DEV.properties -r
       shell: bash
+      env:
+        INTEGRATIONACE: ${{ secrets.INTEGRATIONACE }}
     - run: |
         mkdir -p ${{ github.workspace }}/initial-config/bars
         cp ${{ inputs.AppName }}-${{ github.run_id }}.bar ${{ github.workspace }}/initial-config/bars
